@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+  /* Monochrome tokens (light) */
+  --color-background: #ffffff;
+  --color-foreground: #000000;
+  --color-border: #e5e5e5; /* neutral-200 */
+  --color-muted: #f5f5f5;  /* neutral-100 */
+  --color-overlay: rgba(0,0,0,0.75);
+
+  /* Legacy aliases for compatibility */
+  --background: var(--color-background);
+  --foreground: var(--color-foreground);
+}
+
+:root.dark {
+  color-scheme: dark;
+  /* Monochrome tokens (dark) */
+  --color-background: #000000;
+  --color-foreground: #ffffff;
+  --color-border: #262626; /* neutral-800 */
+  --color-muted: #111111;  /* near black */
+  --color-overlay: rgba(0,0,0,0.75);
+}
+
+@theme inline {
+  --color-background: var(--color-background);
+  --color-foreground: var(--color-foreground);
+  --color-border: var(--color-border);
+  --color-muted: var(--color-muted);
+  --color-overlay: var(--color-overlay);
+  --font-sans: system-ui, sans-serif;
+}
+
+/* Remove auto dark glass behaviors; theming controlled via .dark class */
+
+/* Backdrop fallback when unsupported */
+@supports not ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
+  .supports-no-backdrop {
+    background: color-mix(in oklab, var(--surface) 70%, white);
+  }
+}
+
+/* Respect motion/transparency preferences */
+@media (prefers-reduced-transparency: reduce) {
+  :root { 
+    --blur: 0px; 
+    --saturate: 1; 
+    --surface: rgba(255,255,255,1);
+    --surface-border: rgba(255,255,255,0.8);
+  }
+  :root.dark {
+    --surface: rgba(0,0,0,1);
+    --surface-border: rgba(255,255,255,0.4);
+  }
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+/* Neutral, minimal scrollbars */
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 999px; }
+:root.dark *::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.25); }
+* { scrollbar-width: thin; scrollbar-color: rgba(0,0,0,0.25) transparent; }
+:root.dark * { scrollbar-color: rgba(255,255,255,0.25) transparent; }
+
+/* Attention ring animation used by ThemeWheelModal */
+@keyframes pulseRing {
+  0% {
+    box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(236, 72, 153, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(236, 72, 153, 0);
+  }
+}

@@ -1,0 +1,93 @@
+import { createValidationError } from './errorHandling';
+
+export function assertString(name: string, v: unknown): asserts v is string {
+  if (typeof v !== 'string' || v.length === 0) {
+    throw createValidationError(name, v, 'must be a non-empty string');
+  }
+}
+
+export function assertMinLength(name: string, v: unknown, min: number): asserts v is string {
+  assertString(name, v);
+  if (v.length < min) {
+    throw createValidationError(name, v, `must be at least ${min} characters`);
+  }
+}
+
+export function assertUrl(name: string, v: unknown): asserts v is string {
+  assertString(name, v);
+  try {
+    // Allow data URLs as well
+    if (v.startsWith('data:')) return;
+    new URL(v);
+  } catch {
+    throw createValidationError(name, v, 'must be a valid URL or data URL');
+  }
+}
+
+// Accepts: data URLs, http(s) URLs, or app-relative paths beginning with '/'
+export function assertImageInput(name: string, v: unknown): asserts v is string {
+  assertString(name, v);
+  if (v.startsWith('data:')) return;
+  if (v.startsWith('/')) return; // relative public asset path; server will normalize
+  try {
+    new URL(v);
+    return;
+  } catch {
+    throw createValidationError(name, v, 'must be a data URL, http(s) URL, or app-relative path starting with \'/\'');
+  }
+}
+
+// Shared API request types (runtime guards only). Actual TS types live in src/lib/api/types.ts
+export const guards = {
+  avatar(body: unknown) {
+    const b = body as { imageDataUrl?: unknown };
+    assertString('imageDataUrl', b.imageDataUrl);
+    return { imageDataUrl: b.imageDataUrl } as { imageDataUrl: string };
+  },
+  edit(body: unknown) {
+    const b = body as { baseImageUrl?: unknown; instruction?: unknown };
+    assertUrl('baseImageUrl', b.baseImageUrl);
+    assertMinLength('instruction', b.instruction, 2);
+    return { baseImageUrl: b.baseImageUrl, instruction: b.instruction } as { baseImageUrl: string; instruction: string };
+  },
+  tryon(body: unknown) {
+    const b = body as { characterImageUrl?: unknown; clothingImageUrl?: unknown; clothingImageUrls?: unknown };
+    assertImageInput('characterImageUrl', b.characterImageUrl);
+    const hasSingle = typeof b.clothingImageUrl === 'string';
+    const hasMany = Array.isArray(b.clothingImageUrls) && b.clothingImageUrls.length > 0;
+    if (!hasSingle && !hasMany) {
+      throw createValidationError('clothingImageUrl', b.clothingImageUrl, 'must provide clothingImageUrl or non-empty clothingImageUrls');
+    }
+    if (hasSingle) {
+      assertImageInput('clothingImageUrl', b.clothingImageUrl);
+    }
+    if (hasMany) {
+      for (let i = 0; i < (b.clothingImageUrls as unknown[]).length; i++) {
+        assertImageInput(`clothingImageUrls[${i}]`, (b.clothingImageUrls as unknown[])[i]);
+      }
+    }
+    return { characterImageUrl: b.characterImageUrl, clothingImageUrl: b.clothingImageUrl as string | undefined, clothingImageUrls: b.clothingImageUrls as string[] | undefined } as {
+      characterImageUrl: string;
+      clothingImageUrl?: string;
+      clothingImageUrls?: string[];
+    };
+  },
+  amazon(body: unknown) {
+    const b = body as { query?: unknown };
+    assertMinLength('query', b.query, 2);
+    return { query: b.query } as { query: string };
+  },
+  theme(body: unknown) {
+    const b = body as { context?: unknown };
+    if (b.context !== undefined && typeof b.context !== 'string') {
+      throw createValidationError('context', b.context, 'must be a string when provided');
+    }
+    return { context: b.context as string | undefined };
+  },
+  video(body: unknown) {
+    const b = body as { imageUrl?: unknown };
+    assertUrl('imageUrl', b.imageUrl);
+    return { imageUrl: b.imageUrl } as { imageUrl: string };
+  },
+};
+
