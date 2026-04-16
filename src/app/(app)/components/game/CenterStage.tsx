@@ -11,13 +11,11 @@ export default function CenterStage() {
     <div className="absolute inset-0 z-[60] pointer-events-none">
       {currentImageUrl ? (
         <div className="absolute right-[4%] top-1/2 -translate-y-1/2 w-[34vw] max-w-[520px] min-w-[260px]">
-          <div className="rounded-[28px] border border-white/55 bg-white/08 shadow-[0_18px_42px_rgba(85,30,70,0.24)] p-4 md:p-5">
-            <img
-              src={currentImageUrl}
-              alt="Current styling"
-              className="w-full max-h-[72vh] object-contain opacity-95 contrast-95 saturate-100 brightness-95 drop-shadow-[0_12px_22px_rgba(70,28,58,0.28)]"
-            />
-          </div>
+          <img
+            src={currentImageUrl}
+            alt="Current styling"
+            className="w-full max-h-[72vh] object-contain drop-shadow-[0_12px_22px_rgba(70,28,58,0.28)]"
+          />
         </div>
       ) : (
         <div className="absolute right-[6%] top-1/2 -translate-y-1/2 text-center space-y-4 z-10 opacity-60">

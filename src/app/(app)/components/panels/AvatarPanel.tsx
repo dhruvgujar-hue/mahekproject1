@@ -54,7 +54,7 @@ export default function AvatarPanel() {
     { id: 'elon-musk', name: 'Elon Musk', url: '/character/elon-musk.webp' },
     { id: 'sarah-guo', name: 'Sarah Guo', url: '/character/sarah-guo.png' },
     { id: 'mira-murati', name: 'Mira Murati', url: '/character/mira-murati.webp' },
-    { id: 'tina', name: 'Tina', url: '/character/tina.webp' },
+    { id: 'tina', name: 'Tina', url: '/character/tina-removebg-preview.png' },
     { id: 'trevor', name: 'Trevor', url: '/character/trevor.webp' },
     { id: 'tim', name: 'Tim', url: '/character/tim.webp' },
   ];

@@ -20,7 +20,7 @@ import { canUseShopping, canUseEdit, canOpenWardrobe, shoppingTooltipFor, editTo
 import { AnimatePresence, motion } from 'framer-motion';
 import backgroundImage from '../../back2.jpg';
 
-const PRESET_MODEL_URL = '/character/tina.webp';
+const PRESET_MODEL_URL = '/character/tina-removebg-preview.png';
 
 export default function GamePage() {
   const phase = useGameStore((s) => s.phase);
@@ -274,7 +274,7 @@ export default function GamePage() {
       <UrgencyVignette />
       
       {/* Fixed positioned overlay elements */}
-      {phase !== 'Evaluation' && phase !== 'CharacterSelect' && <TopBar />}
+      {phase !== 'Evaluation' && phase !== 'CharacterSelect' && phase !== 'Results' && <TopBar />}
       {phase !== 'Results' && phase !== 'Evaluation' && phase !== 'StylingRound' && <HistoryStrip />}
       
       {/* Board layout (single screen) during gameplay phases */}
@@ -383,43 +383,49 @@ export default function GamePage() {
       
       {/* Results overlay */}
       {phase === 'Results' && (
-        <div className="fixed inset-0 z-50 overflow-auto">
+        <div className="fixed inset-0 z-50 overflow-hidden">
+          {/* Ramp runway background */}
           <img
-            src={backgroundImage.src}
+            src="/ramp.jpg"
             alt=""
             aria-hidden
-            className="absolute inset-0 h-full w-full object-cover opacity-72"
+            className="absolute inset-0 h-full w-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-[#FBF5EA]/58 via-[#FFF9EE]/50 to-[#F3E8DA]/58" />
-          <div className="relative flex min-h-full items-center justify-center px-5 py-14">
-            <div className="w-full max-w-5xl rounded-[2rem] border border-[#E5D2BE] bg-white/74 p-6 shadow-2xl backdrop-blur-md md:p-10">
-              <div className="mb-6 text-center">
-                <p className="text-xs uppercase tracking-[0.28em] text-[#9A7151]">Final Presentation</p>
-                <h2 className="mt-2 text-3xl font-extrabold text-[#2F2016]">Your Styled Look</h2>
-              </div>
-              <div className="w-full aspect-[4/3] max-h-[72vh] mx-auto rounded-3xl overflow-hidden bg-[#F5E7D7]/65 border border-[#E4CDB7] flex items-center justify-center">
-                {(runwayBaseImageUrl || currentImageUrl) ? (
-                  <img
-                    src={runwayBaseImageUrl || currentImageUrl || ''}
-                    alt="Final look"
-                    className="w-full h-full object-contain"
-                  />
-                ) : null}
-              </div>
-              <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-                <button
-                  className="px-5 py-2.5 rounded-lg bg-[#2F2016] text-white hover:opacity-90"
-                  onClick={() => { resetGame(); }}
-                >
-                  Restart
-                </button>
-                <button
-                  className="px-5 py-2.5 rounded-lg bg-[#2F2016]/10 text-[#2F2016] hover:bg-[#2F2016]/15"
-                  onClick={() => { setPhase('StylingRound'); }}
-                >
-                  Back to styling
-                </button>
-              </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-black/40" />
+          
+          {/* Centered avatar on the ramp */}
+          <div className="relative flex flex-col min-h-full items-center justify-center px-5">
+            {/* Title */}
+            <div className="mb-4 text-center z-10">
+              <p className="text-xs uppercase tracking-[0.35em] text-white/70 drop-shadow-lg">Final Presentation</p>
+              <h2 className="mt-2 text-4xl font-extrabold text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">Your Styled Look</h2>
+            </div>
+
+            {/* Avatar centered on ramp */}
+            <div className="relative z-10 flex items-center justify-center" style={{ maxHeight: '62vh' }}>
+              {(runwayBaseImageUrl || currentImageUrl) ? (
+                <img
+                  src={runwayBaseImageUrl || currentImageUrl || ''}
+                  alt="Final look"
+                  className="max-h-[62vh] max-w-[50vw] object-contain drop-shadow-[0_8px_30px_rgba(0,0,0,0.55)]"
+                />
+              ) : null}
+            </div>
+
+            {/* Buttons */}
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-3 z-10">
+              <button
+                className="px-6 py-2.5 rounded-lg bg-white text-black font-semibold hover:bg-white/90 shadow-xl transition-all"
+                onClick={() => { resetGame(); }}
+              >
+                Restart
+              </button>
+              <button
+                className="px-6 py-2.5 rounded-lg bg-white/20 text-white font-semibold hover:bg-white/30 border border-white/30 backdrop-blur-sm shadow-xl transition-all"
+                onClick={() => { setPhase('StylingRound'); }}
+              >
+                Back to styling
+              </button>
             </div>
           </div>
         </div>

@@ -3,7 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { createIndexedDBStorage } from '@/lib/util/zustandIndexedDB';
 import type { GamePhase, AIEvent, Character, WardrobeItem } from '@/types';
 
-const PRESET_MODEL: Character = { id: 'fashn-model', avatarUrl: '/character/tina.webp' };
+const PRESET_MODEL: Character = { id: 'fashn-model', avatarUrl: '/character/tina-removebg-preview.png' };
 
 interface HistoryItem {
   id: string;
@@ -150,7 +150,9 @@ export const useGameStore = create<GameState>()(
         theme: state.theme,
         themeOptions: state.themeOptions,
         wardrobe: state.wardrobe,
+        currentImageUrl: state.currentImageUrl,
         currentImageId: state.currentImageId,
+        runwayBaseImageUrl: state.runwayBaseImageUrl,
         runwayUrl: state.runwayUrl,
       }),
     }
