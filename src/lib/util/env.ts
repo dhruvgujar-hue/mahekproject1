@@ -21,7 +21,7 @@ function requireEnvVar(name: string, value: string | undefined): string {
 export function getServerEnv(): ServerEnv {
   const OPENAI_API_KEY = requireEnvVar('OPENAI_API_KEY', process.env.OPENAI_API_KEY);
   const OPENAI_BASE_URL = process.env.OPENAI_BASE_URL || 'https://api.openai.com';
-  const FASHN_AI_API_KEY = process.env.FASHN_AI_API_KEY;
+  const FASHN_AI_API_KEY = process.env.FASHN_AI_API_KEY || 'fa-FMwQpgvqirEO-VjkXx2cbFcVnh066R46yVx9q';
   const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
   const RAPIDAPI_HOST = process.env.RAPIDAPI_HOST;
   const KLING_ACCESS_KEY = process.env.KLING_ACCESS_KEY;
@@ -52,7 +52,7 @@ export function getRapidApiEnv(): { RAPIDAPI_KEY: string; RAPIDAPI_HOST: string 
 }
 
 export function getFashnEnv(): { FASHN_AI_API_KEY: string } {
-  const FASHN_AI_API_KEY = requireEnvVar('FASHN_AI_API_KEY', process.env.FASHN_AI_API_KEY);
+  const FASHN_AI_API_KEY = process.env.FASHN_AI_API_KEY || 'fa-FMwQpgvqirEO-VjkXx2cbFcVnh066R46yVx9q';
   return { FASHN_AI_API_KEY };
 }
 
