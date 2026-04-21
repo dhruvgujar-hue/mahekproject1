@@ -18,8 +18,8 @@ export default function GameBoard() {
         className="absolute inset-0 h-full w-full object-cover opacity-70"
       />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_8%_15%,rgba(255,152,204,0.28),transparent_40%),radial-gradient(circle_at_90%_90%,rgba(232,132,186,0.24),transparent_46%),linear-gradient(135deg,rgba(255,235,245,0.38),rgba(255,243,250,0.30),rgba(252,232,241,0.40))] backdrop-blur-[1.5px]" />
-      <div className="h-full w-full min-h-0 grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-4 p-4 md:p-6 max-w-[1600px] mx-auto">
-        <div className="pointer-events-auto h-full min-h-0 flex flex-col max-h-[85vh]">
+      <div className="h-full w-full min-h-0 grid grid-cols-1 lg:grid-cols-[420px_1fr] gap-4 px-4 pb-4 md:px-6 md:pb-6 max-w-[1600px] mx-auto" style={{ paddingTop: '60px' }}>
+        <div className="pointer-events-auto min-h-0 flex flex-col" style={{ maxHeight: 'calc(100vh - 80px)' }}>
           <GenerateSidebar showToast={showToast} className="h-full" />
         </div>
         <div className="pointer-events-auto h-full min-h-0 flex flex-col max-h-[85vh]">
@@ -33,10 +33,10 @@ export default function GameBoard() {
             className="pointer-events-auto rounded-full border border-[#E3A2C8] bg-white/88 px-5 py-3 text-sm font-semibold text-[#2D1A2A] shadow-[0_12px_30px_rgba(160,80,125,0.22)] backdrop-blur-md transition-transform hover:scale-[1.02]"
             onClick={() => {
               setPhase('StylingRound');
-              showToast('Opening apply stage...', 'success');
+              showToast('Proceeding to styling round...', 'success');
             }}
           >
-            Apply on avatar
+            Proceed to Styling Round →
           </button>
         </div>
       )}

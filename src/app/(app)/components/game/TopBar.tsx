@@ -140,31 +140,29 @@ export default function TopBar() {
   }, [timer, phase, showToast, muteToasts]);
 
   return (
-    <div className={`fixed top-3 left-1/2 -translate-x-1/2 z-[70] w-full max-w-3xl px-4 pointer-events-none ${phase === 'ThemeSelect' ? 'pointer-events-none' : ''}`}>
-      <GlassPanel className="px-6 pt-5 pb-5 space-y-3 text-center border border-[#EAB5D9]/65 bg-gradient-to-r from-[#FFF4FA]/85 via-[#FFEAF4]/78 to-[#FFF0F8]/85 backdrop-blur-md shadow-[0_14px_34px_rgba(178,98,150,0.24)]">
-        <div className="text-[10px] uppercase tracking-[0.22em] text-[#B35E92] font-semibold">
-          ELIE SAAB
+    <div className={`fixed top-2 left-1/2 -translate-x-1/2 z-[70] w-full max-w-2xl px-4 pointer-events-none ${phase === 'ThemeSelect' ? 'pointer-events-none' : ''}`}>
+      <GlassPanel className="px-4 py-2.5 text-center border border-[#EAB5D9]/65 bg-gradient-to-r from-[#FFF4FA]/85 via-[#FFEAF4]/78 to-[#FFF0F8]/85 backdrop-blur-md shadow-[0_14px_34px_rgba(178,98,150,0.24)]">
+        <div className="flex items-center justify-center gap-3 flex-wrap">
+          {/* Brand */}
+          <h2 className="text-lg md:text-xl font-extrabold text-[#2D1A2A]">
+            <span className="text-[#BE5D93]">ELIE SAAB ATELIER:</span> {theme}
+          </h2>
+
+          {/* Round pill */}
+          {roundInfo && (
+            <div className="inline-flex items-center rounded-lg border border-[#D88CB8] bg-white/62 px-2.5 py-1">
+              <span className="font-extrabold text-[#B15D90] mr-1.5 text-xs">ROUND {roundInfo.num}:</span>
+              <span className="font-semibold text-[#2D1A2A] text-xs">{roundInfo.title}</span>
+            </div>
+          )}
+
+          {/* Timer */}
+          {timer > 0 && phase !== 'Accessorize' && (
+            <div className="text-lg font-extrabold text-[#2D1A2A] font-mono">
+              {formatTime(timer)}
+            </div>
+          )}
         </div>
-        {/* Brand theme label */}
-        <h2 className="text-[32px] font-extrabold text-[#2D1A2A]">
-          <span className="text-[#BE5D93]">ELIE SAAB ATELIER:</span> {theme}
-        </h2>
-
-        {/* Round (middle): bordered pill */}
-        {roundInfo && (
-          <div className="mx-auto inline-flex items-center rounded-[10px] border-2 border-[#D88CB8] bg-white/62 p-[10px]">
-            <span className="font-extrabold text-[#B15D90] mr-2 text-[16px]">ROUND {roundInfo.num}:</span>
-            <span className="font-semibold text-[#2D1A2A] text-[16px]">{roundInfo.title}</span>
-          </div>
-        )}
-
-        {/* Timer (bottom): large centered */}
-        {timer > 0 && phase !== 'Accessorize' && (
-          <div className="text-[24px] font-extrabold text-[#2D1A2A] font-mono">
-            {formatTime(timer)}
-          </div>
-        )}
-
       </GlassPanel>
     </div>
   );

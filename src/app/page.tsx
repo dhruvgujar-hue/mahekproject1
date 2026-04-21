@@ -19,6 +19,7 @@ import { useDebugStore } from '@/lib/state/debugStore';
 import { canUseShopping, canUseEdit, canOpenWardrobe, shoppingTooltipFor, editTooltipFor, wardrobeTooltipFor } from '@/lib/constants/phasePermissions';
 import { AnimatePresence, motion } from 'framer-motion';
 import backgroundImage from '../../back2.jpg';
+import ramp3Image from '../../ramp3.png';
 
 const PRESET_MODEL_URL = '/character/tina-removebg-preview.png';
 
@@ -41,6 +42,8 @@ export default function GamePage() {
   const [isEditPanelVisible, setEditPanelVisible] = useState(false);
   // Inline wardrobe during StylingRound: no modal anymore
   const [isWardrobeOpen, setWardrobeOpen] = useState(false);
+  // Character selection on start screen
+  const [selectedCharacterUrl, setSelectedCharacterUrl] = useState<string | null>(null);
 
   // Global confetti triggers (left and right side bursts)
   const [leftConfettiTrigger, setLeftConfettiTrigger] = useState(false);
@@ -122,16 +125,17 @@ export default function GamePage() {
     console.log('⌨️  KEYBOARD: Press ESC to close panels, click Phase to cycle');
   }, [phase]);
 
-  // Ensure a visible default model when there is no styling history.
+  // Ensure a visible default model when there is no styling history AND no character selected.
   useEffect(() => {
     const gs = useGameStore.getState();
-    if (gs.history.length === 0) {
+    // Only set fallback if no character has been selected yet
+    if (!gs.character && gs.history.length === 0) {
       const fallback = { id: 'fashn-model', avatarUrl: PRESET_MODEL_URL };
       setCharacter(fallback);
       setCurrentImage(PRESET_MODEL_URL);
       setCurrentImageId(null);
     }
-  }, [setCharacter, setCurrentImage, setCurrentImageId, phase]);
+  }, [setCharacter, setCurrentImage, setCurrentImageId]);
 
   // Listen for global confetti events so celebrations outlive panel unmounts
   useEffect(() => {
@@ -316,7 +320,7 @@ export default function GamePage() {
             initial={{ opacity: 0, y: 24, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.45, ease: 'easeOut' }}
-            className="relative w-full max-w-xl rounded-3xl border border-foreground/15 bg-white/90 dark:bg-black/60 backdrop-blur-md p-8 text-center space-y-6 shadow-2xl"
+            className="relative w-full max-w-2xl rounded-3xl border border-foreground/15 bg-white/90 dark:bg-black/60 backdrop-blur-md p-8 text-center space-y-6 shadow-2xl"
           >
             <motion.h1
               initial={{ opacity: 0, y: 8 }}
@@ -332,8 +336,10 @@ export default function GamePage() {
               transition={{ delay: 0.2, duration: 0.35 }}
               className="text-foreground/80"
             >
-              Enter the ELIE SAAB styling room and score 100
+              Enter your name and choose your character
             </motion.p>
+
+            {/* Name input */}
             <motion.input
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
@@ -343,18 +349,82 @@ export default function GamePage() {
               placeholder="Enter your name"
               className="w-full px-4 py-3 rounded-xl border border-foreground/20 bg-background text-foreground text-center"
             />
+
+            {/* Character selection grid */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.35 }}
+            >
+              <p className="text-sm font-semibold text-foreground/60 uppercase tracking-wider mb-3">Choose Your Character</p>
+              <div className="grid grid-cols-3 gap-4">
+                {[
+                  { id: 'tina', name: 'Tina', url: '/character/tina-removebg-preview.png' },
+                  { id: 'mira', name: 'Mira', url: '/character/mira-murati-removebg-preview.png' },
+                  { id: 'sarah', name: 'Sarah', url: '/character/sarah-guo-removebg-preview.png' },
+                ].map((char) => {
+                  const isSelected = selectedCharacterUrl === char.url;
+                  return (
+                    <motion.div
+                      key={char.id}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setSelectedCharacterUrl(char.url)}
+                      className={`relative cursor-pointer rounded-2xl p-3 transition-all duration-200 ${
+                        isSelected
+                          ? 'bg-foreground/10 border-2 border-foreground/40 shadow-lg ring-2 ring-foreground/20'
+                          : 'bg-foreground/5 border-2 border-transparent hover:bg-foreground/8 hover:border-foreground/15'
+                      }`}
+                    >
+                      <div className="aspect-[3/4] flex items-center justify-center overflow-hidden rounded-xl">
+                        <img
+                          src={char.url}
+                          alt={char.name}
+                          className="h-full w-full object-contain drop-shadow-md"
+                        />
+                      </div>
+                      <p className={`mt-2 text-sm font-bold ${isSelected ? 'text-foreground' : 'text-foreground/60'}`}>
+                        {char.name}
+                      </p>
+                      {isSelected && (
+                        <motion.div
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          className="absolute top-2 right-2 w-6 h-6 rounded-full bg-green-500 flex items-center justify-center"
+                        >
+                          <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                          </svg>
+                        </motion.div>
+                      )}
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </motion.div>
+
             <motion.button
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.96 }}
-              className="px-6 py-3 rounded-xl bg-foreground text-background font-semibold hover:opacity-90"
+              className={`px-6 py-3 rounded-xl font-semibold transition-all ${
+                selectedCharacterUrl
+                  ? 'bg-foreground text-background hover:opacity-90'
+                  : 'bg-foreground/30 text-background/60 cursor-not-allowed'
+              }`}
+              disabled={!selectedCharacterUrl}
               onClick={() => {
+                if (!selectedCharacterUrl) return;
                 const name = (useGameStore.getState().playerName || 'Player').trim() || 'Player';
                 setPlayerName(name);
+                const charData = { id: `selected-char-${Date.now()}`, avatarUrl: selectedCharacterUrl };
+                setCharacter(charData);
+                setCurrentImage(selectedCharacterUrl);
+                setCurrentImageId(null);
                 showToast(`${name} enters the styling arena... 🔥`, 'success', 2600);
                 setPhase('ShoppingSpree');
               }}
             >
-              Enter Game
+              {selectedCharacterUrl ? 'Enter Game →' : 'Select a character first'}
             </motion.button>
           </motion.div>
         </div>
@@ -384,36 +454,38 @@ export default function GamePage() {
       {/* Results overlay */}
       {phase === 'Results' && (
         <div className="fixed inset-0 z-50 overflow-hidden">
-          {/* Ramp runway background */}
+          {/* Ramp runway background (New ramp3.png) */}
           <img
-            src="/ramp.jpg"
+            src={ramp3Image.src}
             alt=""
             aria-hidden
             className="absolute inset-0 h-full w-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-black/40" />
           
+          {/* Title - Moved to absolute top to not block ELIESAAB */}
+          <div className="absolute top-8 left-0 right-0 text-center z-20">
+            <p className="text-xs uppercase tracking-[0.35em] text-white/90 drop-shadow-lg">Final Presentation</p>
+            <h2 className="mt-2 text-4xl font-extrabold text-white drop-shadow-xl">Your Styled Look</h2>
+          </div>
+
           {/* Centered avatar on the ramp */}
           <div className="relative flex flex-col min-h-full items-center justify-center px-5">
-            {/* Title */}
-            <div className="mb-4 text-center z-10">
-              <p className="text-xs uppercase tracking-[0.35em] text-white/70 drop-shadow-lg">Final Presentation</p>
-              <h2 className="mt-2 text-4xl font-extrabold text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">Your Styled Look</h2>
-            </div>
-
-            {/* Avatar centered on ramp */}
-            <div className="relative z-10 flex items-center justify-center" style={{ maxHeight: '62vh' }}>
+            {/* Avatar container - Pushed down to sit below ELIESAAB text */}
+            <div className="relative z-10 flex items-center justify-center w-full translate-y-[10vh]" style={{ maxHeight: '62vh' }}>
+              {/* Backlight spotlight to make mix-blend-multiply work beautifully on a dark background */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40vw] h-[70vh] bg-white opacity-80 blur-[100px] rounded-full pointer-events-none"></div>
+              
               {(runwayBaseImageUrl || currentImageUrl) ? (
                 <img
                   src={runwayBaseImageUrl || currentImageUrl || ''}
                   alt="Final look"
-                  className="max-h-[62vh] max-w-[50vw] object-contain drop-shadow-[0_8px_30px_rgba(0,0,0,0.55)]"
+                  className="relative z-10 max-h-[62vh] max-w-[50vw] object-contain mix-blend-multiply"
                 />
               ) : null}
             </div>
 
-            {/* Buttons */}
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-3 z-10">
+            {/* Buttons - Pushed down as well */}
+            <div className="mt-12 translate-y-[10vh] flex flex-wrap items-center justify-center gap-3 z-10">
               <button
                 className="px-6 py-2.5 rounded-lg bg-white text-black font-semibold hover:bg-white/90 shadow-xl transition-all"
                 onClick={() => { resetGame(); }}

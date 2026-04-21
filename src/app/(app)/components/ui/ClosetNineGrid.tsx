@@ -62,7 +62,7 @@ export default function ClosetNineGrid() {
     }, [pendingItemId]);
   })();
 
-  const slots = useMemo(() => Array.from({ length: 9 }).map((_, i) => wardrobe[i] || null), [wardrobe]);
+
 
   const baseUrl = useMemo(() => {
     const latest = [...history].reverse().find((h) => h.type === 'edit' || h.type === 'tryOn');
@@ -104,6 +104,13 @@ export default function ClosetNineGrid() {
     return () => document.removeEventListener('keydown', onKey);
   }, [previewItemId]);
 
+  // Listen for external apply trigger from StylingBoard button
+  useEffect(() => {
+    const handler = () => { void applyAllOnModel(); };
+    window.addEventListener('APPLY_ALL_ON_MODEL', handler);
+    return () => window.removeEventListener('APPLY_ALL_ON_MODEL', handler);
+  }, []);
+
   const onDropIntoGrid = (e: React.DragEvent<HTMLDivElement>) => {
     try {
       const raw = e.dataTransfer.getData('application/json');
@@ -141,17 +148,7 @@ export default function ClosetNineGrid() {
 
   return (
     <GlassPanel className={`h-full flex flex-col ${phase === 'StylingRound' ? 'bg-transparent border-0 shadow-none' : ''} ${phase === 'ShoppingSpree' ? 'bg-white/26 border-[#F0B7D8]/60 shadow-[0_18px_42px_rgba(170,85,140,0.18)] backdrop-blur-md' : ''}`}>
-      {phase === 'StylingRound' && wardrobe.length > 0 && (
-        <button
-          type="button"
-          className="sticky top-0 z-20 mb-3 w-full rounded-2xl border border-[#E3A2C8]/55 bg-white/80 backdrop-blur-md px-4 py-3 text-left shadow-[0_10px_28px_rgba(180,90,140,0.16)] transition-transform hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
-          onClick={() => { void applyAllOnModel(); }}
-          disabled={applyingAll}
-          aria-label="Apply on avatar"
-        >
-          <div className="text-[10px] uppercase tracking-[0.18em] text-[#A95A8A] font-semibold">Apply on avatar</div>
-        </button>
-      )}
+
 
       {/* Show empty state if no wardrobe items in StylingRound */}
       {phase === 'StylingRound' && wardrobe.length === 0 && (
@@ -182,24 +179,30 @@ export default function ClosetNineGrid() {
             : `absolute inset-0 z-0 m-auto max-w-full max-h-full object-contain pointer-events-none select-none scale-110 ${isShoppingSpree ? 'translate-y-4 md:translate-y-6' : 'translate-y-2 md:translate-y-4'}`
           }
         />
-        {/* Existing grid overlayed on top */}
+        {/* Dynamic grid - centered inside the closet */}
         <div
           className={phase === 'StylingRound' 
-            ? "relative z-[2] grid grid-cols-3 gap-3 md:gap-4 w-[60%] h-[60%] md:w-[58%] md:h-[58%]"
-            : "relative z-10 grid grid-cols-3 gap-2 md:gap-3 w-[50%] h-[50%] md:w-[45%] md:h-[45%]"
+            ? `absolute inset-0 z-[2] flex items-center justify-center`
+            : `absolute inset-0 z-10 flex items-center justify-center`
           }
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={onDropIntoGrid}
         >
-          {slots.map((item, idx) => (
-            <div key={idx} className={phase === 'StylingRound' 
+          <div
+            className={phase === 'StylingRound'
+              ? `grid gap-3 md:gap-4 w-[52%] md:w-[50%] ${wardrobe.length <= 3 ? 'grid-cols-' + Math.min(wardrobe.length, 3) : 'grid-cols-3'}`
+              : `grid gap-2 md:gap-3 w-[44%] md:w-[40%] ${wardrobe.length <= 3 ? 'grid-cols-' + Math.min(wardrobe.length, 3) : 'grid-cols-3'}`
+            }
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={onDropIntoGrid}
+          >
+          {wardrobe.map((item) => (
+            <div key={item.id} className={phase === 'StylingRound' 
               ? "relative rounded-2xl border border-border bg-background/80 dark:bg-background/40 overflow-hidden shadow-sm"
               : "relative rounded-xl border border-dashed border-border bg-background overflow-hidden"
             }>
               <div
                 className="relative w-full h-full aspect-square flex items-center justify-center"
-                onMouseLeave={() => { if (item && phase === 'ShoppingSpree') schedulePreviewClose(item.id); }}
-                onClick={() => { if (item && phase === 'StylingRound') { void (async () => {
+                onMouseLeave={() => { if (phase === 'ShoppingSpree') schedulePreviewClose(item.id); }}
+                onClick={() => { if (phase === 'StylingRound') { void (async () => {
                   setPendingItemId(item.id);
                   if (!baseUrl) {
                     setPendingItemId(null);
@@ -221,33 +224,27 @@ export default function ClosetNineGrid() {
                   }
                   await tryOnQueue.enqueue({ baseImageId: baseImageId ?? null, baseImageUrl: clickedBaseUrl, item });
                 })(); } }}
-                title={item && phase === 'StylingRound' ? 'Apply to avatar' : undefined}
-                role={item && phase === 'StylingRound' ? 'button' : undefined}
+                title={phase === 'StylingRound' ? 'Apply to avatar' : undefined}
+                role={phase === 'StylingRound' ? 'button' : undefined}
               >
-                {item ? (
-                  <>
-                    <img
-                      src={item.imageUrl}
-                      alt={item.name}
-                      className={phase === 'StylingRound' 
-                        ? "absolute inset-0 w-full h-full object-contain p-3 md:p-4"
-                        : "absolute inset-0 w-full h-full object-contain p-2"
-                      }
-                      onMouseEnter={() => { if (canHover() && phase === 'ShoppingSpree') openPreview(item.id); }}
-                    />
-                    {phase === 'StylingRound' && pendingItemId === item.id && (
-                      <div className="absolute inset-0 bg-foreground/35 flex items-center justify-center">
-                        <div className="w-7 h-7 rounded-full border-2 border-white/70 border-t-transparent animate-spin" />
-                      </div>
-                    )}
-                    {/* No Try On button or hover overlay in either phase */}
-                  </>
-                ) : (
-                  <div className="text-foreground/60 text-xs">Empty</div>
+                <img
+                  src={item.imageUrl}
+                  alt={item.name}
+                  className={phase === 'StylingRound' 
+                    ? "absolute inset-0 w-full h-full object-contain p-3 md:p-4"
+                    : "absolute inset-0 w-full h-full object-contain p-2"
+                  }
+                  onMouseEnter={() => { if (canHover() && phase === 'ShoppingSpree') openPreview(item.id); }}
+                />
+                {phase === 'StylingRound' && pendingItemId === item.id && (
+                  <div className="absolute inset-0 bg-foreground/35 flex items-center justify-center">
+                    <div className="w-7 h-7 rounded-full border-2 border-white/70 border-t-transparent animate-spin" />
+                  </div>
                 )}
               </div>
             </div>
           ))}
+        </div>
         </div>
       </div>
       )}

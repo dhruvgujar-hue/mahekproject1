@@ -10,6 +10,7 @@ export default function StylingBoard() {
   const setPhase = useGameStore((s) => s.setPhase);
   const setLevel1Score = useGameStore((s) => s.setLevel1Score);
   const level1Score = useGameStore((s) => s.level1Score);
+  const wardrobe = useGameStore((s) => s.wardrobe);
   const [unlocking, setUnlocking] = useState(false);
 
   const proceedToAccessorize = () => {
@@ -30,6 +31,8 @@ export default function StylingBoard() {
         className="absolute inset-0 h-full w-full object-cover opacity-70"
       />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_10%,rgba(255,150,206,0.30),transparent_42%),radial-gradient(circle_at_85%_100%,rgba(231,127,181,0.22),transparent_44%),linear-gradient(135deg,rgba(255,236,246,0.34),rgba(255,243,250,0.28),rgba(251,228,238,0.38))]" />
+      
+      {/* Main content grid - original layout restored */}
       <div className="h-full w-full min-h-0 grid grid-cols-1 lg:grid-cols-[600px_1fr] xl:grid-cols-[640px_1fr] gap-4 p-4 md:p-6 max-w-[1600px] mx-auto">
         <div className="pointer-events-auto h-full min-h-0 flex flex-col max-h-[85vh]">
           <ClosetNineGrid />
@@ -75,12 +78,24 @@ export default function StylingBoard() {
         )}
       </AnimatePresence>
       
+      {/* Bottom buttons - side by side */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.12, duration: 0.35 }}
-        className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50"
+        className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3"
       >
+        {wardrobe.length > 0 && (
+          <button
+            type="button"
+            className="px-5 py-2.5 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-[#FF6B9D] to-[#C44DFF] shadow-lg hover:scale-[1.03] active:scale-[0.97] transition-all"
+            onClick={() => {
+              window.dispatchEvent(new CustomEvent('APPLY_ALL_ON_MODEL'));
+            }}
+          >
+            👗 Apply
+          </button>
+        )}
         <GlassButton
           variant="primary"
           size="lg"
@@ -95,4 +110,3 @@ export default function StylingBoard() {
     </div>
   );
 }
-

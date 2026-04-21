@@ -149,6 +149,7 @@ export const useGameStore = create<GameState>()(
         level1Score: state.level1Score,
         theme: state.theme,
         themeOptions: state.themeOptions,
+        character: state.character,
         wardrobe: state.wardrobe,
         currentImageUrl: state.currentImageUrl,
         currentImageId: state.currentImageId,
