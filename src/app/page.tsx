@@ -475,9 +475,9 @@ export default function GamePage() {
               {/* Backlight spotlight to make mix-blend-multiply work beautifully on a dark background */}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40vw] h-[70vh] bg-white opacity-80 blur-[100px] rounded-full pointer-events-none"></div>
               
-              {(runwayBaseImageUrl || currentImageUrl) ? (
+              {(currentImageUrl || runwayBaseImageUrl) ? (
                 <img
-                  src={runwayBaseImageUrl || currentImageUrl || ''}
+                  src={currentImageUrl || runwayBaseImageUrl || ''}
                   alt="Final look"
                   className="relative z-10 max-h-[62vh] max-w-[50vw] object-contain mix-blend-multiply"
                 />

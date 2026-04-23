@@ -15,7 +15,7 @@ export default function EvaluationBoard() {
   const character = useGameStore((s) => s.character);
   
   // Use the player's final selected image (runway base or current)
-  const playerFinalImage = runwayBaseImageUrl || currentImageUrl || character?.avatarUrl;
+  const playerFinalImage = currentImageUrl || runwayBaseImageUrl || character?.avatarUrl;
 
   const proceedToResults = () => {
     setPhase('Results');

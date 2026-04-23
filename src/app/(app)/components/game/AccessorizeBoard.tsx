@@ -7,6 +7,13 @@ import { performTryOn } from '@/lib/adapters/fashn';
 import { selectImage } from '@/lib/services/stateActions';
 import { AnimatePresence, motion } from 'framer-motion';
 
+const PRESET_BAGS = [
+  '/Bags/WhatsApp_Image_2026-04-13_at_8.23.09_PM-removebg-preview.png',
+  '/Bags/WhatsApp_Image_2026-04-13_at_8.23.09_PM__1_-removebg-preview.png',
+  '/Bags/WhatsApp_Image_2026-04-13_at_8.23.10_PM-removebg-preview.png',
+  '/Bags/WhatsApp_Image_2026-04-13_at_8.23.10_PM__1_-removebg-preview.png',
+];
+
 export default function AccessorizeBoard() {
   const phase = useGameStore((s) => s.phase);
   const theme = useGameStore((s) => s.theme);
@@ -27,23 +34,13 @@ export default function AccessorizeBoard() {
 
   if (phase !== 'Accessorize') return null;
 
-  const playerImage = runwayBaseImageUrl || currentImageUrl || character?.avatarUrl || '';
+  const playerImage = currentImageUrl || runwayBaseImageUrl || character?.avatarUrl || '';
 
-  async function applyBag(file: File): Promise<void> {
-    if (!file.type.startsWith('image/')) {
-      showToast('Please upload a bag image', 'error');
-      return;
-    }
+  async function applyBagUrl(bagUrl: string): Promise<void> {
     if (!playerImage) return;
     setBagLoading(true);
     try {
-      const dataUrl = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(String(reader.result || ''));
-        reader.onerror = () => reject(new Error('Failed to read file'));
-        reader.readAsDataURL(file);
-      });
-      const images = await performTryOn(playerImage, dataUrl);
+      const images = await performTryOn(playerImage, bagUrl);
       const bagImage = images[0];
       if (bagImage) {
         await selectImage(bagImage, { type: 'tryOn', description: 'Bag accessory applied', addToHistory: true });
@@ -125,26 +122,22 @@ export default function AccessorizeBoard() {
                   <div className="text-foreground/60 text-sm">No look selected</div>
                 )}
               </div>
-              <label className="block">
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) void applyBag(file);
-                    e.currentTarget.value = '';
-                  }}
-                  disabled={bagLoading}
-                />
-                <motion.span
-                  whileHover={{ scale: 1.01 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="inline-flex w-full items-center justify-center px-3 py-3 rounded-xl border border-border bg-[#7D8FE2]/10 text-foreground cursor-pointer hover:bg-[#7D8FE2]/20 transition-colors"
-                >
-                  {bagLoading ? 'Applying bag...' : 'Upload bag & apply'}
-                </motion.span>
-              </label>
+              {/* Bag selection grid */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
+                {PRESET_BAGS.map((bagUrl, idx) => (
+                  <motion.div
+                    key={bagUrl}
+                    whileHover={{ scale: bagLoading ? 1 : 1.05 }}
+                    whileTap={{ scale: bagLoading ? 1 : 0.95 }}
+                    className={`relative cursor-pointer rounded-2xl border-2 p-2 bg-[#7D8FE2]/5 hover:bg-[#7D8FE2]/15 border-transparent transition-all overflow-hidden ${
+                      bagLoading ? 'opacity-50 pointer-events-none' : ''
+                    }`}
+                    onClick={() => applyBagUrl(bagUrl)}
+                  >
+                    <img src={bagUrl} alt={`Bag ${idx + 1}`} className="w-full aspect-[4/5] object-contain drop-shadow-md" />
+                  </motion.div>
+                ))}
+              </div>
 
               <motion.button
                 whileHover={{ scale: 1.01 }}
@@ -192,7 +185,7 @@ export default function AccessorizeBoard() {
                 <div className="mt-3 text-foreground font-semibold">
                   {bagLoading && 'Applying accessory...'}
                   {!bagLoading && bagApplied && 'Bag applied ✨'}
-                  {!bagLoading && !bagApplied && 'Upload a bag to continue'}
+                  {!bagLoading && !bagApplied && 'Select a bag to continue'}
                 </div>
                 <AnimatePresence mode="popLayout">
                   <motion.div

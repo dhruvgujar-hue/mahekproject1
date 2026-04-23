@@ -20,9 +20,7 @@ const CLOTHING_ITEMS: WardrobeItem[] = [
   // Shoes
   { id: 'clothing-shoes1', name: 'Shoes', imageUrl: '/CLOTHING/Shoes-removebg-preview.png', buyLink: '', price: null, source: 'preset', category: 'shoes' },
   { id: 'clothing-shoes2', name: 'Shoes 2', imageUrl: '/CLOTHING/Shoes2-removebg-preview.png', buyLink: '', price: null, source: 'preset', category: 'shoes' },
-  // Bags
-  { id: 'clothing-bag1', name: 'Bag', imageUrl: '/CLOTHING/Bag-removebg-preview.png', buyLink: '', price: null, source: 'preset', category: 'bag' },
-  { id: 'clothing-bag2', name: 'Bag 2', imageUrl: '/CLOTHING/Bag1-removebg-preview.png', buyLink: '', price: null, source: 'preset', category: 'bag' },
+  { id: 'clothing-shoes3', name: 'Shoes 3', imageUrl: '/CLOTHING/Shoes3.png', buyLink: '', price: null, source: 'preset', category: 'shoes' },
 ];
 
 interface GenerateSidebarProps {
