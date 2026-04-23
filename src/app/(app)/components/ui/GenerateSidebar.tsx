@@ -18,9 +18,9 @@ const CLOTHING_ITEMS: WardrobeItem[] = [
   { id: 'clothing-bottom2', name: 'Bottom 2', imageUrl: '/CLOTHING/Bottom2-removebg-preview.png', buyLink: '', price: null, source: 'preset', category: 'bottom' },
   { id: 'clothing-bottom3', name: 'Bottom 3', imageUrl: '/CLOTHING/Bottom3-removebg-preview.png', buyLink: '', price: null, source: 'preset', category: 'bottom' },
   // Shoes
-  { id: 'clothing-shoes1', name: 'Shoes', imageUrl: '/CLOTHING/Shoes-removebg-preview.png', buyLink: '', price: null, source: 'preset', category: 'shoes' },
-  { id: 'clothing-shoes2', name: 'Shoes 2', imageUrl: '/CLOTHING/Shoes2-removebg-preview.png', buyLink: '', price: null, source: 'preset', category: 'shoes' },
-  { id: 'clothing-shoes3', name: 'Shoes 3', imageUrl: '/CLOTHING/Shoes3.png', buyLink: '', price: null, source: 'preset', category: 'shoes' },
+  { id: 'clothing-shoes1', name: 'Shoes', imageUrl: '/CLOTHING/Shoes-removebg-preview.png', buyLink: '', price: null, source: 'preset', category: 'shoe' },
+  { id: 'clothing-shoes2', name: 'Shoes 2', imageUrl: '/CLOTHING/Shoes2-removebg-preview.png', buyLink: '', price: null, source: 'preset', category: 'shoe' },
+  { id: 'clothing-shoes3', name: 'Shoes 3', imageUrl: '/CLOTHING/Shoes3.png', buyLink: '', price: null, source: 'preset', category: 'shoe' },
 ];
 
 interface GenerateSidebarProps {
