@@ -5,10 +5,7 @@ const nextConfig: NextConfig = {
     // Ensure client reference manifest is generated correctly
     webpackBuildWorker: false, // Temporarily disable to fix Docker build issues
   },
-  eslint: {
-    // Temporarily ignore ESLint errors during builds; enforce later in Phase 5
-    ignoreDuringBuilds: true,
-  },
+
   typescript: {
     // Enforce TypeScript type safety during builds
     ignoreBuildErrors: false,
