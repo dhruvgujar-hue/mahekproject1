@@ -8,7 +8,7 @@ export type GamePhase =
   | 'WalkoutAndEval'
   | 'Results';
 
-export type Category = 'top' | 'bottom' | 'dress';
+export type Category = 'top' | 'bottom' | 'dress' | 'shoe' | 'bag';
 
 export interface Character {
   id: string;
