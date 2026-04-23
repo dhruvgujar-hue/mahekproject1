@@ -6,7 +6,7 @@ import { parallel } from '@/lib/util/promise';
 import { editImageWithBlob } from '@/lib/server/openai';
 
 export const runtime = 'nodejs';
-export const maxDuration = 600;
+export const maxDuration = 300;
 
 const EDIT_PROMPT_BASE = `ROLE
 Expert AI photo editor. Subtly edit an existing image based on user text. Do not change the person, pose, or existing clothes unless specifically asked.

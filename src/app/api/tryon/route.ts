@@ -11,7 +11,7 @@ import fs from 'node:fs/promises';
 import sharp from 'sharp';
 
 export const runtime = 'nodejs';
-export const maxDuration = 600;
+export const maxDuration = 300;
 
 const BASE_URL = 'https://api.fashn.ai/v1';
 

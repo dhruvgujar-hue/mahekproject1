@@ -7,7 +7,7 @@ import { editImageWithBlob } from '@/lib/server/openai';
 import { logger } from '@/lib/util/logger';
 
 export const runtime = 'nodejs';
-export const maxDuration = 600;
+export const maxDuration = 300;
 
 const AVATAR_PROMPT = `Transform this person as a character in the exact stylized 3D art style of The Sims 4 by Electronic Arts.
 

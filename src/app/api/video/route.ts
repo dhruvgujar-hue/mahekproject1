@@ -7,7 +7,7 @@ import { poll } from '@/lib/util/promise';
 import { fetchBlob } from '@/lib/util/http';
 
 export const runtime = 'nodejs';
-export const maxDuration = 600;
+export const maxDuration = 300;
 
 const API_HOST = 'https://api-singapore.klingai.com';
 
